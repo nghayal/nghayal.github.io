@@ -2524,6 +2524,9 @@ input::-moz-focus-inner {
   background-image: url(../images/icons/social/icon-linkedin.svg);
 }
 
+.header__social .ss-github a::after {
+  background-image: url(../images/icons/social/icon-github.svg);
+}
 
 
 /* -------------------------------------------------------------------
