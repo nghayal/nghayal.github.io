@@ -5,7 +5,7 @@
     <!--- basic page needs
     ================================================== -->
     <meta charset="utf-8">
-    <title>Standard Post - Intro to PostgreSQL </title>
+    <title>Standard Post - Mongo Profiler</title>
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -133,22 +133,22 @@
 
                     <div class="media-wrap entry__media">
                         <div class="entry__post-thumb">
-                            <img src="images/thumbs/postgresql/introtopsql.png" 
-                                 srcset="images/thumbs/postgresql/introtopsql.png 2000w, 
-                                 images/thumbs/postgresql/introtopsql.png 1000w, 
-                                 images/thumbs/postgresql/introtopsql.png 500w" sizes="(max-width: 2000px) 100vw, 2000px" alt="">
+                            <img src="images/thumbs/mongo/performance.jpg" 
+                                 srcset="images/thumbs/mongo/performance.jpg 2000w, 
+                                 images/thumbs/mongo/performance.jpg 1000w, 
+                                 images/thumbs/mongo/performance.jpg 500w" sizes="(max-width: 2000px) 100vw, 2000px" alt="">
                         </div>
                     </div>
 
                     <div class="content__page-header entry__header">
                         <h1 class="display-1 entry__title">
-                        Introduction to PostgreSQL.
+                        Mongo Profiler
                         </h1>
                         <ul class="entry__header-meta">
                             <li class="author">By <a href="#0">Nishant Ghayal</a></li>
-                            <li class="date">March 29, 2020</li>
+                            <li class="date">May 25, 2020</li>
                             <li class="cat-links">
-                                <a href="#0">PostgreSQL</a>
+                                <a href="#0">Mongo Profiler</a>
                             </li>
                         </ul>
                     </div> <!-- end entry__header -->
@@ -156,24 +156,50 @@
                     <div class="entry__content">
 
                         <p class="lead drop-cap">
-                            PostgreSQL is a powerful, open-source object-relational database system that uses and extend the SQL language combined with many features that safely store and scale the most complicated data workloads. An object-relational database system means is a database management system similar to a relational database, but with an object-oriented database model: objects, classes, and inheritance are directly supported in database schemas and in the query language.
+                            This article outlines how to use the MongoDB database profiler. Basically it collects detailed information about queries that are running. We can define what types of queries are running and you can configure the system to collect explain details of slow running queries that take more than 500 ms for example.
                         </p>
 
-                        <h2>Why Use PostgreSQL?</h2>
-    
-                        <p>
-                        PostgreSQL comes with many features when building scaled applications while providing data integrity and fault tolerance. Best part is that it is a widely support open source relational database for small or large datasets. It easily installed, it can provide quick upstart for companies needing a cost saving database platform.
-                        </p>
-     
-                        <p>
-                        It supports many data types, data integrity, concurrency, disaster recovery, security, and extensibility. For example, you can build a active cluster with terabytes of complex data with replication failover scenerios to keep the database highly available in many Cloud regions. You will then be tolerant to outages in your chosen cloud regions. 
+                        <h3>First we will check the status of the Profiler:</h3>
+                        <pre><code>
+                            code {
+                                use <dbname>
+                                db.setProfilingLevel()
+                            }
+                        </code></pre>
 
-                        </p>
-    
-                        <h3>History</h3>
-    
+                        <h3>If necessary, clean up previously captured queries </h3>
+                        <pre><code>
+                            code {
+                                db.system.profile.drop()
+                            }
+                        </code></pre>
+
+                        <h3>To turn on the Profiler issue the following command, in our case 500ms </h3>
+                        <pre><code>
+                            code {
+                                db.setProfilingLevel(1,500)
+                            }
+                        </code></pre>
+
+                        <h3>Once a period of time has passed, we can check if any slow queries were captured </h3>
+                        <pre><code>
+                            code {
+                                db.system.profile.count()
+                                db.system.profile.find().sort({$natural:-1}).limit(1).pretty()
+                                db.system.profile.find({},{"millis":1}).sort({"millis":-1}).limit(10).pretty()
+                            }
+                        </code></pre>
+
+                        <h3> To clean up and turn off the Profiler </h3>
+                        <pre><code>
+                            code {
+                                db.system.profile.drop()
+                                db.setProfilingLevel(0)
+                            }
+                        </code></pre>
+
                         <p>
-                        In 1986 the first implementation was called the "Berkeley Postgres Project", and has gone through many iterations following the paces of IT. In 1994 the technology was renamed to Potgres95 and enhanced with performance and maintainbility improvements. In 1996 it was finally renamed to PostgreSQL as Postgres95 would not progres time. Many in the open source commit changes to improve the source code. 
+                        The profiler is stored in the system.profile collection and can be exported using mongoexport or a GUI tool such as Studio 3T.
                         </p>
 
                     </div> <!-- end entry content -->
